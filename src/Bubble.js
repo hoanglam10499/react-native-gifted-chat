@@ -2,7 +2,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Text, Clipboard, StyleSheet, TouchableWithoutFeedback, View, ViewPropTypes } from 'react-native';
+import { Text, Clipboard, StyleSheet, TouchableWithoutFeedback, View, ViewPropTypes, ToastAndroid } from 'react-native';
 
 import MessageText from './MessageText';
 import MessageImage from './MessageImage';
@@ -19,10 +19,7 @@ export default class Bubble extends React.Component {
     if (this.props.onLongPress) {
       this.props.onLongPress(this.context, this.props.currentMessage);
     } else if (this.props.currentMessage.text) {
-      const options =
-        this.props.optionTitles.length > 0
-          ? this.props.optionTitles.slice(0, 2)
-          : ['Copy Text', 'Cancel'];
+      const options = ['Sao Chép', 'Hủy'];
       const cancelButtonIndex = options.length - 1;
       this.context.actionSheet().showActionSheetWithOptions(
         {
@@ -33,6 +30,7 @@ export default class Bubble extends React.Component {
           switch (buttonIndex) {
             case 0:
               Clipboard.setString(this.props.currentMessage.text);
+              ToastAndroid.show('Đã sao chép văn bản', ToastAndroid.SHORT);
               break;
             default:
               break;
@@ -140,7 +138,7 @@ export default class Bubble extends React.Component {
       }
       return (
         <View style={styles.usernameView}>
-          <Text style={[styles.username, this.props.usernameStyle]}>~ {currentMessage.user.name}</Text>
+          <Text style={[styles.username, this.props.usernameStyle]}>{currentMessage.user.name}</Text>
         </View>
       );
     }
@@ -246,8 +244,8 @@ const styles = {
     marginRight: 10,
   },
   username: {
-    top: -3,
-    left: 0,
+    bottom: 55,
+    position: 'relative',
     fontSize: 12,
     backgroundColor: 'transparent',
     color: '#aaa',
@@ -273,7 +271,6 @@ Bubble.defaultProps = {
   renderTicks: null,
   renderTime: null,
   position: 'left',
-  optionTitles: ['Copy Text', 'Cancel'],
   currentMessage: {
     text: null,
     createdAt: null,
@@ -303,7 +300,6 @@ Bubble.propTypes = {
   renderTime: PropTypes.func,
   renderTicks: PropTypes.func,
   position: PropTypes.oneOf(['left', 'right']),
-  optionTitles: PropTypes.arrayOf(PropTypes.string),
   currentMessage: PropTypes.object,
   nextMessage: PropTypes.object,
   previousMessage: PropTypes.object,
